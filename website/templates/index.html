@@ -23,13 +23,60 @@
 
 <div class="container">
   <div class="row">
-    <div class="col">Hello, Demo Webiste</div>
+    <div class="col">
+      <br/>
+      <form method="post" enctype="multipart/form-data">
+        <div class="input-group">
+          <div class="input-group-prepend">
+            <span class="input-group-text" id="inputGroupFileAddon01">.mp3, .flac</span>
+          </div>
+          <div class="custom-file">
+            <input type="file" class="custom-file-input" name="file" id="file-input">
+            <label class="custom-file-label" id="custom-file-label">Select file for Speech-to-text conversion
+              demo</label>
+          </div>
+          <div class="input-group-append">
+            <input type="submit" value="Upload" class="btn btn-success"/>
+          </div>
+
+        </div>
+      </form>
+    </div>
   </div>
+  <br/>
+
+  {% if error %}
+    <div class="row">
+      <div class="col">
+        <p class="font-weight-bold text-danger">{{ error }}</p>
+      </div>
+    </div>
+  {% endif %}
+
+  {% if transcription %}
+
+    <div class="row">
+      <div class="col">
+        <span class="font-weight-bold text-success">Recognized:</span>
+        {{ transcription }}
+      </div>
+    </div>
+  {% endif %}
 </div>
 
 <!-- Optional JavaScript -->
 <!-- jQuery first, then Popper.js, then Bootstrap JS -->
 <script src="{{ url_for('static', filename='js/jquery-3.3.1.min.js') }}"></script>
 <script src="{{ url_for('static', filename='js/bootstrap.min.js') }}"></script>
+
+<script>
+    $('#file-input').on('change', function () {
+        //get the file name
+        var fileName = $(this).val();
+        //replace the "Choose a file" label
+        $(this).next('.custom-file-label').html(fileName);
+    })
+</script>
+
 </body>
 </html>
