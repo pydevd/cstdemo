@@ -1,2 +1,1 @@
-# cstdemo
-Demo website for Google Cloud Speech-to-Text API
+# Demo website for Cloud Speech-to-Text API
