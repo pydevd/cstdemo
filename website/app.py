@@ -35,31 +35,36 @@ class IndexView(views.MethodView):
             audio = self._get_audio_file_from_request()
             flac_file_path = self._save_as_flac_to_local_fs(audio)
 
+            # upload file to Google Storage
             gs_bucket = storage_client.get_bucket(config.GS_BUCKET)
             blob = gs_bucket.blob(flac_file_path.name)
             blob.upload_from_filename(flac_file_path.as_posix())
+            # start
+
+            uri = 'gs://{}/{}'.format(config.GS_BUCKET, blob.name)
+
+            audio = types.RecognitionAudio(uri=uri)
+
+            rc_config = types.RecognitionConfig(
+                encoding=enums.RecognitionConfig.AudioEncoding.FLAC,
+                sample_rate_hertz=16000,
+                language_code='en-US')
+
+            operation = gsr_client.long_running_recognize(rc_config, audio)
+
+            with mixutil.log_time("response = operation.result(timeout=90)"):
+                response = operation.result(timeout=90)
+
+            data = []
+            with mixutil.log_time("for res in response.results"):
+                for res in response.results:
+                    data.append(res.alternatives[0].transcript)
+
+            context['transcription'] = ' '.join(data)
 
         except exc.FileUploadError as e:
             LOG.error("file processing error %s", logutil.format_exception(e))
             context['error'] = e.msg
-
-            # audio = types.RecognitionAudio(content=content)
-            # config = types.RecognitionConfig(
-            #     encoding=enums.RecognitionConfig.AudioEncoding.FLAC,
-            #     sample_rate_hertz=16000,
-            #     language_code='en-US')
-            #
-            # operation = gsr_client.long_running_recognize(config, audio)
-            #
-            # with mixutil.log_time("response = operation.result(timeout=90)"):
-            #     response = operation.result(timeout=90)
-            #
-            # data = []
-            # with mixutil.log_time("for res in response.results"):
-            #     for res in response.results:
-            #         data.append(res.alternatives[0].transcript)
-            #
-            # context['transcription'] = ' '.join(data)
 
         return flask.render_template('index.html', **context)
 
