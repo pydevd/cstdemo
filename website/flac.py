@@ -24,8 +24,11 @@ def convert(mp3_file_path: pathlib.Path, flac_file_path: pathlib.Path):
         'stdout': subprocess.PIPE,
         'stderr': subprocess.PIPE
     }
-    process = subprocess.Popen(cmd, **kwargs)
-    process.wait()
+    try:
+        process = subprocess.Popen(cmd, **kwargs)
+        process.wait()
+    except Exception as e:
+        raise exc.FlacConversionError from e
 
     if process.returncode != 0:
         msg = "return_code={}".format(process.returncode)
