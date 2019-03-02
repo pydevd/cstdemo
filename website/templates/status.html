@@ -1,0 +1,59 @@
+{% extends 'base.html' %}
+
+{% block content %}
+  {% if progress == 100 %}
+    <div class="row">
+      <div class="col text-center">
+        <p class="font-weight-bold text-success text-uppercase">Recognized</p>
+        <p class="text-justify">{{ text }}</p>
+      </div>
+    </div>
+  {% elif progress == -1 %}
+    <div class="row">
+      <div class="col text-center">
+        <br/>
+        <p class="font-weight-bold text-info text-uppercase">
+          Nothing to process. Start new processing from the main page.
+        </p>
+      </div>
+    </div>
+  {% else %}
+    <div class="row">
+      <div class="col text-center">
+        <p class="text-center text-uppercase text-info">PROCESSING</p>
+        <div class="spinner-grow text-info" role="status">
+          <span class="sr-only">Processing...</span>
+        </div>
+      </div>
+    </div>
+  {% endif %}
+{% endblock %}
+
+{% block onload_script %}
+  <script>
+      $(document).ready(() => {
+          $.ajax({
+              type: "POST",
+              url: "/status/",
+              success: (status) => {
+                  if (status['progress'] === -1) return;
+                  if (status['progress'] === 100) return;
+
+                  let interval = setInterval(() => {
+                      $.ajax({
+                          type: "POST",
+                          url: "/status/",
+                          success: (status) => {
+                              if (status['progress'] === 100) {
+                                  clearInterval(interval);
+                                  window.location.href = window.location.href
+                              }
+                          },
+                      })
+                  }, 3000)
+              },
+          })
+
+      })
+  </script>
+{% endblock %}

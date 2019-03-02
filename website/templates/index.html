@@ -1,27 +1,6 @@
-<!doctype html>
-<html lang="en">
-<head>
-  <!-- Required meta tags -->
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+{% extends 'base.html' %}
 
-  <!-- Bootstrap CSS -->
-  <link rel="stylesheet" href="{{ url_for('static', filename='css/bootstrap.min.css') }}">
-
-  <title>Demo Website</title>
-</head>
-<body>
-<div class="container">
-  <nav class="navbar navbar-expand-lg navbar-dark bg-primary">
-    <a class="navbar-brand" href="#">Demo Website</a>
-    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarColor01"
-            aria-controls="navbarColor01" aria-expanded="false" aria-label="Toggle navigation">
-      <span class="navbar-toggler-icon"></span>
-    </button>
-  </nav>
-</div>
-
-<div class="container">
+{% block content %}
   <div class="row">
     <div class="col">
       <br/>
@@ -31,8 +10,10 @@
             <span class="input-group-text" id="inputGroupFileAddon01">.mp3, .flac</span>
           </div>
           <div class="custom-file">
-            <input type="file" class="custom-file-input" name="file" id="file-input">
-            <label class="custom-file-label" id="custom-file-label">Select file for Speech-to-text conversion
+            <input type="file" class="custom-file-input" name="file"
+                   id="file-input">
+            <label class="custom-file-label" id="custom-file-label">Select file
+              for Speech-to-text conversion
               demo</label>
           </div>
           <div class="input-group-append">
@@ -43,40 +24,15 @@
       </form>
     </div>
   </div>
-  <br/>
+{% endblock %}
 
+{% block error %}
   {% if error %}
+    <br/>
     <div class="row">
       <div class="col text-center text-uppercase">
         <p class="font-weight-bold text-danger">{{ error }}</p>
       </div>
     </div>
   {% endif %}
-
-  {% if transcription %}
-
-    <div class="row">
-      <div class="col">
-        <span class="font-weight-bold text-success">Recognized:</span>
-        {{ transcription }}
-      </div>
-    </div>
-  {% endif %}
-</div>
-
-<!-- Optional JavaScript -->
-<!-- jQuery first, then Popper.js, then Bootstrap JS -->
-<script src="{{ url_for('static', filename='js/jquery-3.3.1.min.js') }}"></script>
-<script src="{{ url_for('static', filename='js/bootstrap.min.js') }}"></script>
-
-<script>
-    $('#file-input').on('change', function () {
-        //get the file name
-        const fileName = $(this).val();
-        //replace the "Choose a file" label
-        $(this).next('.custom-file-label').html(fileName);
-    })
-</script>
-
-</body>
-</html>
+{% endblock %}
