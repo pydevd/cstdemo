@@ -3,7 +3,7 @@ import logging
 import time
 import uuid
 
-from website.utils import logutil
+from utils import logutil
 
 LOG = logutil.get_logger(__name__)
 
